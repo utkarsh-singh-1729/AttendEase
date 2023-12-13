@@ -1,9 +1,26 @@
+import pyttsx3
+engine = pyttsx3.init('sapi5')
+voices = engine.getProperty('voices')
+engine.setProperty('voice', voices[0].id)
+
+
+
+def speak(audio):
+    engine.say(audio)
+    engine.runAndWait()
+
+
+
+
 import mysql.connector
 from datetime import datetime
 mydb = mysql.connector.connect(
     host="localhost", user="root", password="vin07@SIN", database="bank"
 )
-print("***************WELCOME TO ARSICAULT BAKERY***************")
+welc=("Welcome to ARSICAULT BAKERY")
+WEL=("***************WELCOME TO ARSICAULT BAKERY***************")
+print(WEL)
+speak(welc)
 mycursor = mydb.cursor()
 mycursor.execute("create database if not exists bakery")
 mycursor.execute("use bakery")
@@ -20,6 +37,8 @@ if rust==[]:
     mycursor.execute("insert into item(p_id, product,price)values(6,'Bun',60)")  
     mydb.commit()
 
+
+
 mycursor.execute("create table if not exists cakes(p_id varchar(11) UNIQUE, varities varchar(25))")
 sml="select *from cakes"
 mycursor.execute(sml)
@@ -33,7 +52,7 @@ if rest==[]:
     mycursor.execute("insert into cakes(p_id,varities)values(6,'German chocolate cake')")  
     mydb.commit()
 
-mycursor.execute("create table if not exists customer(cust_id varchar(10) PRIMARY KEY, cust_name varchar(35), mobile BIGINT NOT NULL)")
+mycursor.execute("create table if not exists customer(cust_id BIGINT AUTO_INCREMENT PRIMARY KEY, cust_name varchar(35), mobile BIGINT NOT NULL)")
 mycursor.execute("create table if not exists employees(emp_id varchar(10) PRIMARY KEY, e_name varchar(35),salary int,post varchar(30), mobile BIGINT NOT NULL)")
 sul="select * from employees"
 mycursor.execute(sul)
@@ -50,27 +69,33 @@ if rist==[]:
 
 
 
-ch=""
-while ch!='N' or ch!='n':
-    print("\n\nPLEASE CHOOSE\n1 for Admin\n2 for Costumer\n3 for Exit\n")
-    
-    choice=int(input("Enter your choise : "))
-    if choice==3:
-        break
-    elif choice==1:
-        user=input("Enter Your Userid : ")
-        pas= input("Enter your Password : ")
-        if pas=='pms@1':
+
+print("\n\nPLEASE CHOOSE\n1 for Admin\n2 for Costumer\n\n")
+
+choice=int(input("Enter your choise : "))
+
+if choice==1:
+    user=input("Enter Your Userid : ")
+    pas= input("Enter your Password : ")
+    if pas=='pms@1':
+        ch=""
+        while ch!='N' or ch!='n':
             print("----------------------------------------------------------------------")
+            wp=(f"Welcome {user} you are logged in as a Admin")
+            speak(wp)
             print(f"!      *****Welcome {user} you are logged in as a Admin******       !")
             print("!      Press 1 for ADD item in the shop                              !")            
             print("!      Press 2 for SEE item in the shop                              !")            
             print("!      press 3 to ADD varities of cake in shop                       !")
             print("!      Press 4 to ADD worker in the shop                             !")
             print("!      Press 5 to SEE worker                                         !")
-            print("!      Press 6 to SEE salary of any worker                           !")            
-            print("----------------------------------------------------------------------")
+            print("!      Press 6 to SEE salary of any worker                           !")
+            print("!      Press 7 for log out                                           !")            
+            print("!--------------------------------------------------------------------!")
             c=int(input("Enter Your Choise : "))
+            if c==7:
+                print("!-------------------------you are logged out-------------------------!")
+                break
             if c==1:
                 def addi():
                     p_id= int(input("Enter product id : "))
@@ -92,7 +117,7 @@ while ch!='N' or ch!='n':
                     for p_id, product, price in rust:
                         print(p_id,".","\t",product,"\t",'₹',price)
                 see()
-            
+
             elif c==3:
                 def update():
                     p_id= int(input("Enter product id : "))
@@ -103,7 +128,7 @@ while ch!='N' or ch!='n':
                     mydb.commit()
                     print("*********CAKE VARITIES ADDED SUCCESSFULLY**********")
                 update()
-            
+
             elif c==4:
                 def addw():
                     emp_id= int(input("Enter employee id : "))
@@ -117,7 +142,6 @@ while ch!='N' or ch!='n':
                     mydb.commit()
                     print("*********EMPLOYEE ADDED SUCCESSFULLY**********")
                 addw()
-
             elif c==5:
                 def seew():
                     print("Employee in the Shop")
@@ -129,7 +153,7 @@ while ch!='N' or ch!='n':
                     for emp_id, e_name, salary, post, mobile in rust:
                         print(f"{emp_id}\t{e_name}\t{salary}\t{post}\t{mobile}")
                 seew()
-            
+
             elif c==6:
                 def sal():
                     mycursor = mydb.cursor()
@@ -140,37 +164,27 @@ while ch!='N' or ch!='n':
                     print(f"emp_id\te_name\tsalary\tpost\tmobile")
                     print(f"{detail}\t")
                 sal()
-
-        else:
-            print("!----------------------------------------------------------------------!")
-            print("!       authentication problem please enter correct password           !")
-            print("!----------------------------------------------------------------------!")
-    elif choice==2:
-        cust_name=input("enter your name : ")
-        cust_id = int(input("enter customer id : "))
-        mobile =int(input("enter your mobile no :"))
-        s1=("insert into customer(cust_id,cust_name,mobile) values(%s,%s,%s)")
-        d1= (cust_id,cust_name,mobile)
-        mycursor.execute(s1,d1)
-        mydb.commit()
-        print(" !----------------------------------------------------------------------!")
-        print(f"!                   *****Welcome {cust_name}******                     !")
-        print(" !                   Press 1 for SEE MEENU in the shop                   !")            
-        print(" !                   Press 2 for order item in the shop                   !")                     
-        print(" !----------------------------------------------------------------------!")
-        co=int(input("Enter you choice"))
-        if co==1:
-            def seeq():
-                lo="select * from item"
-                mycursor.execute(lo) 
-                rust=mycursor.fetchall()
-                t=(['p_id', 'product', 'price'])
-                print("************Items in the Shop************\n")
-                for p_id, product, price in rust:
-                    print(f"{p_id}\t{product}\t₹{price}")
-            seeq()
-        
-        elif co==2:
+    else:
+        print("!----------------------------------------------------------------------!")
+        print("!       authentication problem please enter correct password           !")
+        print("!----------------------------------------------------------------------!")
+elif choice==2:
+    cust_name=input("enter your name : ")
+    mobile =int(input("enter your mobile no :"))
+    s1=("insert into customer(cust_id,cust_name,mobile) values(NULL,%s,%s)")
+    d1= (cust_name,mobile)
+    mycursor.execute(s1,d1)
+    mydb.commit()
+    pyo=(f"Welcome {cust_name}")
+    speak(pyo)
+    print(" !----------------------------------------------------------------------!")
+    print(f"!                   *****Welcome {cust_name}******                     !")
+    print(" !                   Press 1 for SEE MEENU in the shop                  !")            
+    print(" !                   Press 2 for order item in the shop                 !")                     
+    print(" !----------------------------------------------------------------------!")
+    co=int(input("Enter you choice"))
+    if co==1:
+        def seeq():
             lo="select * from item"
             mycursor.execute(lo) 
             rust=mycursor.fetchall()
@@ -178,153 +192,85 @@ while ch!='N' or ch!='n':
             print("************Items in the Shop************\n")
             for p_id, product, price in rust:
                 print(f"{p_id}\t{product}\t₹{price}")
-            lo="select * from item"
-            c=(lo) 
-            rust=mycursor.fetchall()
-            print(rust)
-            l=[]
-            for i in range(len(rust)):
-                l.append(rust[i][0])
-              
-            p_lid= int(input("Enter Product id : "))
-            if p_lid==1:
-                
-                print("which cake do you want? ")
-                kl="select * from cakes"
-                mycursor.execute(kl)
-                rut=mycursor.fetchall()
-                f=(['p_id','varities'])
-                for p_id, varities in rut:
-                    print(f"{p_id}\t\t{varities}")
-                print("Choose which cake do you want?")
-                ck= int(input("enter product id: "))
-                if ck==1:
-                    print("how many Quantity of Molten Chocolate Cake do you want ? ;")
-                    qty= int(input("Enter qty :"))
-                    print("You have successfully order your Molten Chocolate Cake ")
-                    print(f"!------------------{cust_name}'s bill-------------------!")
-                    print(f"!------------------{datetime.now()}---------------------!")
-                    print(f"!------the total amount is ₹{850*qty}-------------------!")
-                    print(f"!----------------------Thank You------------------------!")
-
-                if ck==2:
-                    print("how many Quantity of  do you want ? ;")
-                    qty= int(input("Enter qty :"))
-                    print("You have successfully order your Gooey Butter Cake ")
-                    print(f"!------------------{cust_name}'s bill-------------------!")
-                    print(f"!------------------{datetime.now()}---------------------!")
-                    print(f"!------the total amount is ₹{850*qty}-------------------!")
-                    print(f"!----------------------Thank You------------------------!")
-
-                if ck==3:
-                    print("how many Quantity of Boston Cream Pie do you want ? ;")
-                    qty= int(input("Enter qty :"))
-                    print("You have successfully order your Boston Cream Pie ")
-                    print(f"!------------------{cust_name}'s bill-------------------!")
-                    print(f"!------------------{datetime.now()}---------------------!")
-                    print(f"!------the total amount is ₹{850*qty}-------------------!")
-                    print(f"!----------------------Thank You------------------------!")
-
-                if ck==4:
-                    print("how many Quantity of Ice Cream Cake do you want ? ;")
-                    qty= int(input("Enter qty :"))
-                    print("You have successfully order your Ice Cream Cake")
-                    print(f"!------------------{cust_name}'s bill-------------------!")
-                    print(f"!------------------{datetime.now()}---------------------!")
-                    print(f"!------the total amount is ₹{850*qty}-------------------!")
-                    print(f"!----------------------Thank You------------------------!")
-                if ck==5:
-                    print("how many Quantity of Red Velvet Cake do you want ? ;")
-                    qty= int(input("Enter qty :"))
-                    print("You have successfully order your Red Velvet Cake ")
-                    print(f"!------------------{cust_name}'s bill-------------------!")
-                    print(f"!------------------{datetime.now()}---------------------!")
-                    print(f"!------the total amount is ₹{850*qty}-------------------!")
-                    print(f"!----------------------Thank You------------------------!")
-                if ck==6:
-                    print("how many Quantity of German chocolate cake do you want ? ;")
-                    qty= int(input("Enter qty :"))
-                    print("You have successfully order your German chocolate cake ")
-                    print(f"!------------------{cust_name}'s bill-------------------!")
-                    print(f"!------------------{datetime.now()}!")
-                    print(f"!------the total amount is ₹{850*qty}------------------!")
-                    print(f"!----------------------Thank You----------------------!")
-            if p_lid==2:
-                print("how many Quantity of Cookie do you want ? ;")
-                qty= int(input("Enter qty(kg) :"))
-                print("You have successfully order your Cookie ")
-                print(f"!------------------{cust_name}'s bill-------------------!")
-                print(f"!------------------{datetime.now()}---------------------!")
-                print(f"!------the total amount is ₹{200*qty}-------------------!")
-                print(f"!----------------------Thank You------------------------!")
-            if p_lid==3:
-                print("how many Quantity of Muffin do you want ? ;")
+        seeq()
+    elif co==2:
+        lo="select * from item"
+        mycursor.execute(lo) 
+        rust=mycursor.fetchall()
+        t=(['p_id', 'product', 'price'])
+        print("************Items in the Shop************\n")
+        for p_id, product, price in rust:
+            print(f"{p_id}\t{product}\t₹{price}")
+        lo="select * from item"
+        c=(lo) 
+        rust=mycursor.fetchall()
+        print(rust)
+        l=[]
+        for i in range(len(rust)):
+            l.append(rust[i][0])
+        p_lid= int(input("Enter Product id : "))
+        query = f"SELECT price FROM item WHERE p_id = {p_lid}"
+        mycursor.execute(query)
+        result = mycursor.fetchone()
+        bil=(result[0])
+        
+        query = f"SELECT p_id FROM item WHERE p_id = {p_lid}"
+        mycursor.execute(query)
+        ui= mycursor.fetchone()
+        uid=(ui[0])
+        uuu=int(uid)
+       
+        query = f"SELECT product FROM item WHERE p_id = {p_lid}"
+        mycursor.execute(query)
+        ni= mycursor.fetchone()
+        
+        
+        
+        if p_lid==1:
+            print("which cake do you want? ")
+            kl="select * from cakes"
+            mycursor.execute(kl)
+            rut=mycursor.fetchall()
+            f=(['p_id','varities'])
+            for p_id, varities in rut:
+                print(f"{p_id}\t\t{varities}")
+            print("Choose which cake do you want?")
+            ck= int(input("enter product id: "))
+            puery = f"SELECT varities FROM cakes WHERE p_id={ck}"
+            mycursor.execute(puery)
+            resu = mycursor.fetchone()
+            query = f"SELECT p_id FROM cakes WHERE p_id = {p_lid}"
+            mycursor.execute(query)
+            mi= mycursor.fetchone()
+            ud=(ui[0])
+            vivo=int(uid)
+            if ck==vivo:
+                print(f"how many Quantity of {resu} Cake do you want ? ")
                 qty= int(input("Enter qty :"))
-                print("You have successfully order your Muffin ")
-                print(f"!------------------{cust_name}'s bill-------------------!")
-                print(f"!------------------{datetime.now()}---------------------!")
-                print(f"!------the total amount is ₹{150*qty}-------------------!")
-                print(f"!----------------------Thank You------------------------!")
-
-            if p_lid==4:
-                print("how many Quantity of Pastry do you want ? ;")
-                qty= int(input("Enter qty :"))
-                print("You have successfully order your Pastry ")
-                print(f"!------------------{cust_name}'s bill-------------------!")
-                print(f"!------------------{datetime.now()}---------------------!")
-                print(f"!------the total amount is ₹{300*qty}-------------------!")
-                print(f"!----------------------Thank You------------------------!")
-            
-            if p_lid==5:
-                print("how many Quantity of Viennoiserie do you want ? ;")
-                qty= int(input("Enter qty :"))
-                print("You have successfully order your Viennoiserie ")
-                print(f"!------------------{cust_name}'s bill-------------------!")
-                print(f"!------------------{datetime.now()}---------------------!")
-                print(f"!------the total amount is ₹{550*qty}-------------------!")
-                print(f"!----------------------Thank You------------------------!")
-            
-            if p_lid==6:
-                print("how many Quantity of Bun do you want ? ;")
-                qty= int(input("Enter qty :"))
-                print("You have successfully order your Bun ")
-                print(f"!------------------{cust_name}'s bill-------------------!")
-                print(f"!------------------{datetime.now()}---------------------!")
-                print(f"!------the total amount is ₹{60*qty}-------------------!")
-                print(f"!----------------------Thank You------------------------!")
-
-            if p_lid==56:
-                print("how many Quantity of ice cream do you want ? ;")
-                qty= int(input("Enter qty :"))
-                print("You have successfully order your ice cream ")
-                print(f"!------------------{cust_name}'s bill-------------------!")
-                print(f"!------------------{datetime.now()}---------------------!")
-                print(f"!------the total amount is ₹{300*qty}-------------------!")
-                print(f"!----------------------Thank You------------------------!")
-
-            if p_lid==89:
-                print("how many Quantity of donutt do you want ? ;")
-                qty= int(input("Enter qty :"))
-                print("You have successfully order your donutt ")
-                print(f"!------------------{cust_name}'s bill-------------------!")
-                print(f"!------------------{datetime.now()}---------------------!")
-                print(f"!------the total amount is ₹{789*qty}-------------------!")
-                print(f"!----------------------Thank You------------------------!")
-            
-                
-                
-                
-
+                print(f"You have successfully order your {resu} ")
+                def bills():
+                   print("        You have successfully order your item            !")
+                   print(f"!------------------{cust_name}'s bill-------------------!")
+                   print(f"!------------------{datetime.now()}-------!")
+                   print(f"!------the total amount is ₹{bil*qty}-------------------!")
+                   print(f"!-------Thank You, Have A Nice Day----------------------!")
+                bills()
+            else:
+                print("Please Choose Correct option")   
+        elif p_lid==uuu:
+            print(f"how many Quantity of {ni[0]} do you want ? ;")
+            qty= int(input("Enter qty :"))
+            print(f"      You have successfully order your {ni[0]} ")
+            print(f"!------------------{cust_name}'s bill-------------------!")
+            print(f"!------------------{datetime.now()}-------!")
+            print(f"!------the total amount is ₹{bil*qty}-------------------!")
+            print(f"!-------Thank You, Have A Nice Day----------------------!")
         else:
-            print("Please Choose Correct option")          
+                print("Please Choose Correct option")          
     else:
+        print("Please Choose Correct option")
+
+else:
         print("Please Choose Correct option")                           
-                            
-
-            
-
-
-
-
-
-
+                        
+        
