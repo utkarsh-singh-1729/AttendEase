@@ -2,7 +2,7 @@
 
 A modern attendance management system with real-time tracking, reporting, and student management features.
  
-
+  
 ## Features ✨
 - 🔐 User Authentication (Email/Password)
 - 👥 Student Management (Add/Edit/Delete)
